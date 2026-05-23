@@ -79,7 +79,7 @@ export const OptimizationView: React.FC<OptimizationViewProps> = ({
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between border-b border-dark-border/60 pb-3 mb-5 gap-3">
         <div>
           <h3 className="font-display font-semibold text-sm text-white flex items-center gap-1.5">
-            <Coins className="w-4 h-4 text-emerald-400" /> Enterprise FinOps Optimization стратегия Desk
+            <Coins className="w-4 h-4 text-emerald-400" /> Enterprise FinOps Optimization Strategy Desk
           </h3>
           <p className="text-xs text-zinc-400">Generate actionable optimization suggestions to prune dead capacity and right-size systems</p>
         </div>
