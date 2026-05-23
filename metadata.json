@@ -1,0 +1,6 @@
+{
+  "name": "Azure FinOps Dev Studio",
+  "description": "An enterprise-grade Azure Cost Visibility and FinOps Optimization Platform simulating multi-tenant cloud financial operations, cost anomaly detection, forecasting, and resource rightsizing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
