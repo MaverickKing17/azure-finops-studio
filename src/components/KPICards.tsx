@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { TrendingUp, AlertOctagon, Sparkles, DollarSign, Activity } from "lucide-react";
+import { animate } from "motion/react";
 
 interface KPICardsProps {
   mtdSpend: number;
@@ -14,6 +15,44 @@ interface KPICardsProps {
   wasteCost: number;
   anomaliesCount: number;
 }
+
+interface AnimatedCounterProps {
+  value: number;
+  decimals?: number;
+  prefix?: string;
+}
+
+const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
+  value,
+  decimals = 0,
+  prefix = "CAD "
+}) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  const prevValueRef = useRef(value);
+
+  useEffect(() => {
+    const controls = animate(prevValueRef.current, value, {
+      duration: 1.0,
+      ease: "easeOut",
+      onUpdate(currentValue) {
+        setDisplayValue(currentValue);
+      }
+    });
+
+    prevValueRef.current = value;
+    return () => controls.stop();
+  }, [value]);
+
+  return (
+    <span>
+      {prefix}
+      {displayValue.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      })}
+    </span>
+  );
+};
 
 export const KPICards: React.FC<KPICardsProps> = ({
   mtdSpend,
@@ -30,7 +69,8 @@ export const KPICards: React.FC<KPICardsProps> = ({
     {
       id: "mtd-spend",
       title: "Month-to-Date Spend",
-      value: `CAD ${mtdSpend.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      rawValue: mtdSpend,
+      decimals: 2,
       subtitle: `Billing period: May 1 - May 23`,
       icon: <DollarSign className="w-5 h-5 text-sky-400" />,
       tag: "Actual Spend",
@@ -39,7 +79,8 @@ export const KPICards: React.FC<KPICardsProps> = ({
     {
       id: "avg-burn",
       title: "Avg Daily Burn Rate",
-      value: `CAD ${dailyBurn.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      rawValue: dailyBurn,
+      decimals: 2,
       subtitle: `${anomaliesCount} cost spike anomalies tracked`,
       icon: <Activity className="w-5 h-5 text-amber-400" />,
       tag: anomaliesCount > 0 ? "Spikey Heat" : "Optimal Run",
@@ -48,7 +89,8 @@ export const KPICards: React.FC<KPICardsProps> = ({
     {
       id: "projected-spend",
       title: "Projected Month-End",
-      value: `CAD ${projectedSpend.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+      rawValue: projectedSpend,
+      decimals: 0,
       subtitle: `Budget: CAD ${monthlyBudget.toLocaleString()} (${budgetRunRatePercent}% utilized)`,
       icon: <TrendingUp className={`w-5 h-5 ${isOverBudget ? "text-rose-400 animate-pulse" : "text-emerald-400"}`} />,
       tag: isOverBudget ? "Budget Overrun" : "Under Budget",
@@ -57,7 +99,8 @@ export const KPICards: React.FC<KPICardsProps> = ({
     {
       id: "idle-waste",
       title: "Idle Resource Waste",
-      value: `CAD ${wasteCost.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+      rawValue: wasteCost,
+      decimals: 0,
       subtitle: `CAD ${wasteCost.toLocaleString("en-US", { maximumFractionDigits: 0 })} Current Waste | CAD ${(wasteCost * 12).toLocaleString("en-US", { maximumFractionDigits: 0 })} Annualized Risk`,
       icon: <AlertOctagon className="w-5 h-5 text-rose-500" />,
       tag: wasteCost > 0 ? "Annualized Risk Exposure" : "Fully Optimized",
@@ -86,7 +129,7 @@ export const KPICards: React.FC<KPICardsProps> = ({
           </div>
           
           <h3 className="font-display font-bold text-lg xl:text-xl text-white tracking-tight leading-none mb-1">
-            {card.value}
+            <AnimatedCounter value={card.rawValue} decimals={card.decimals} />
           </h3>
           
           <p className="text-xs text-zinc-400 leading-tight mb-3">
