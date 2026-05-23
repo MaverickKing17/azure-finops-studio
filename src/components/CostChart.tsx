@@ -27,13 +27,12 @@ interface CostChartProps {
 
 // Neon color scheme fit for premium Grafana/Azure diagnostics styles
 const SERVICE_COLORS: Record<string, string> = {
-  "Compute": "#0078D4", // Azure Blue
-  "Storage": "#00BCF2", // sky cyan
-  "Networking": "#107C41", // moss green
-  "OpenAI Inference": "#B4009E", // cosmic purple
-  "Databases": "#F2C811", // Amber yellow
-  "Kubernetes": "#FF8C00", // Bright Orange
-  "AI Services": "#7FBA00"  // Apple green
+  "Avere vFXT Compute": "#00BCF2", // sky cyan
+  "Azure OpenAI Inference": "#F43F5E", // High-contrast hot coral rose (specifically chosen to pop for inference tracking)
+  "Cognitive Services Search": "#10B981", // Emerald green for search vector databases
+  "Databases": "#F59E0B", // Solid amber
+  "Storage": "#3B82F6", // Royal blue
+  "Networking": "#6366F1" // Indigo
 };
 
 export const CostChart: React.FC<CostChartProps> = ({ spendRecords, forecastData, monthlyBudget }) => {
@@ -44,19 +43,16 @@ export const CostChart: React.FC<CostChartProps> = ({ spendRecords, forecastData
     const map: Record<string, Record<string, number>> = {};
     spendRecords.forEach((rec) => {
       if (!map[rec.usageDate]) {
-        map[rec.usageDate] = {
-          "Compute": 0,
-          "Storage": 0,
-          "Networking": 0,
-          "OpenAI Inference": 0,
-          "Databases": 0,
-          "Kubernetes": 0,
-          "AI Services": 0
-        };
+        map[rec.usageDate] = {};
+        Object.keys(SERVICE_COLORS).forEach((svc) => {
+          map[rec.usageDate][svc] = 0;
+        });
       }
-      map[rec.usageDate][rec.serviceName] = parseFloat(
-        ((map[rec.usageDate][rec.serviceName] || 0) + rec.pretaxCost).toFixed(2)
-      );
+      if (SERVICE_COLORS[rec.serviceName] !== undefined) {
+        map[rec.usageDate][rec.serviceName] = parseFloat(
+          ((map[rec.usageDate][rec.serviceName] || 0) + rec.pretaxCost).toFixed(2)
+        );
+      }
     });
 
     return Object.keys(map)

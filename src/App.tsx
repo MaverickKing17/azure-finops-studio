@@ -242,13 +242,13 @@ export default function App() {
         <div className="hidden xl:flex items-center gap-4 bg-dark-main border border-dark-border/80 rounded-xl px-4 py-2 text-xs">
           <div>
             <span className="text-zinc-500 font-mono text-[9px] block uppercase tracking-wider">
-              {activeOrg.name} Target Budget
+              {activeOrg.name} Institutional Limits
             </span>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-white font-bold font-mono">
-                CAD {projectedSpend.toLocaleString("en", { maximumFractionDigits: 0 })}
+                Target Budget: CAD {activeOrg.budget.toLocaleString()}
               </span>
-              <span className="text-zinc-400 text-[10px]">/ CAD {activeOrg.budget.toLocaleString()}</span>
+              <span className="text-zinc-400 font-mono text-[11px]">| Current Run-Rate: CAD {projectedSpend.toLocaleString("en", { maximumFractionDigits: 0 })}</span>
             </div>
           </div>
 

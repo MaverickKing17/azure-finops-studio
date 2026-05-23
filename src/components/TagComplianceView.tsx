@@ -64,7 +64,7 @@ export const TagComplianceView: React.FC<TagComplianceViewProps> = ({
         {/* Ring score or huge visual typography display representing state */}
         <div className="flex flex-col items-center justify-center p-6 border border-dark-border/40 rounded-xl bg-dark-main/40 mb-5 text-center">
           <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mb-1">
-            Global Compliance Score
+            Global Regulatory Score
           </span>
           <div className={`text-5xl font-display font-extrabold px-6 py-4 rounded-2xl border ${scoreColorClass(auditResult.score)} mb-3`}>
             {auditResult.score}%
@@ -77,13 +77,28 @@ export const TagComplianceView: React.FC<TagComplianceViewProps> = ({
               <ShieldAlert className="w-4 h-4 text-rose-400" />
             )}
             <span>
-              {auditResult.compliantCount} of {auditResult.totalResources} resources tagged compliant
+              {auditResult.compliantCount} of {auditResult.totalResources} resources audited
             </span>
           </div>
 
-          <p className="text-[11px] text-zinc-500 max-w-xs mt-1">
-            Azure governance mandates three standard tags: <code className="text-sky-400 font-mono">environment</code>, <code className="text-sky-400 font-mono">owner</code>, and <code className="text-sky-400 font-mono">cost_center</code>.
-          </p>
+          {/* Audit readiness status block */}
+          <div className="mt-2 text-center">
+            <span className="inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded text-[10px] font-mono font-semibold">
+              ✓ System tag taxonomy matches institutional data boundaries
+            </span>
+          </div>
+
+          <div className="text-[11px] text-zinc-400 text-left mt-4 border-t border-dark-border/40 pt-3 space-y-2 select-none">
+            <p className="font-semibold text-white uppercase text-[9px] tracking-wider mb-1 font-mono">Institutional Governance Standard</p>
+            <p className="leading-normal">
+              To satisfy strict financial audit trails and regulatory lineage requirements, our continuous scanner validates that every infrastructure asset maintains compliant tags:
+            </p>
+            <div className="font-mono text-[10px] text-zinc-400 pl-1.5 border-l border-sky-500/50 space-y-1 mt-1.5 leading-tight">
+              <div>• <code className="text-sky-400 font-bold">environment</code>: validates regulatory staging & safety boundaries</div>
+              <div>• <code className="text-sky-400 font-bold">owner</code>: logs administrative and lineage custody</div>
+              <div>• <code className="text-sky-400 font-bold">cost_center</code>: maps institutional budget accountability</div>
+            </div>
+          </div>
         </div>
 
         {/* Metrics stack */}

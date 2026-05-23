@@ -105,12 +105,12 @@ export class FinOpsDatabase {
 
     // Categories to build
     const services = [
-      { name: "Compute", meter: "Virtual Machines", share: 0.35 },
-      { name: "Storage", meter: "Managed Blocks", share: 0.15 },
-      { name: "Networking", meter: "Virtual Network", share: 0.10 },
-      { name: "OpenAI Inference", meter: "Azure OpenAI Tokens", share: 0.18 },
-      { name: "Databases", meter: "Azure SQL DB", share: 0.12 },
-      { name: "Kubernetes", meter: "AKS Node Pools", share: 0.10 }
+      { name: "Avere vFXT Compute", meter: "High-Performance Financial Modeling Compute", share: 0.35 },
+      { name: "Azure OpenAI Inference", meter: "gpt-4o token consumption", share: 0.25 },
+      { name: "Cognitive Services Search", meter: "Vector Indexes", share: 0.15 },
+      { name: "Databases", meter: "Azure SQL DB", share: 0.13 },
+      { name: "Storage", meter: "Managed Blocks", share: 0.07 },
+      { name: "Networking", meter: "Virtual Network", share: 0.05 }
     ];
 
     // Seed variables
@@ -125,7 +125,7 @@ export class FinOpsDatabase {
         const resourceTemplates = Array.from({ length: 12 }).map((_, rIdx) => {
           const service = services[rIdx % services.length];
           const resNum = 100 + rIdx;
-          const resourceName = `${org.id}-${service.name.toLowerCase().replace(" ", "")}-res${resNum}`;
+          const resourceName = `${subId}-${service.name.toLowerCase().replace(/ /g, "")}-res${resNum}`;
           const isNonCompliant =
             (org.id === "apex" && rIdx % 2 === 1) || // Apex has heavy non-compliance
             (org.id === "logistics" && rIdx === 3) ||
@@ -157,7 +157,7 @@ export class FinOpsDatabase {
           const baseCost = (service.share * 150 + seededRandom(resourceName) * 40) * multiplier;
 
           // Resource utilization rate baseline
-          const isVM = service.name === "Compute";
+          const isVM = service.name === "Avere vFXT Compute" || service.name === "Compute";
           const utilizationRate = isVM 
             ? (rIdx % 5 === 0 ? 8 + seededRandom(resourceName) * 5 : 45 + seededRandom(resourceName) * 35) 
             : undefined;
@@ -166,7 +166,7 @@ export class FinOpsDatabase {
           const status = isVM && utilizationRate && utilizationRate < 15 ? "idle" : "active";
 
           return {
-            resourceId: `/subscriptions/${subId}/resourceGroups/rg-${org.id}-primary/providers/Microsoft.${service.name}/${resourceName}`,
+            resourceId: `/subscriptions/${subId}/resourceGroups/rg-${org.id}-primary/providers/Microsoft.${service.name.replace(/ /g, "")}/${resourceName}`,
             resourceName,
             service,
             rLocation,
@@ -188,10 +188,10 @@ export class FinOpsDatabase {
             let actualDailyCost = res.baseCost * (0.95 + randNoise * 0.15) * weekdayWeight;
 
             // Introduce dynamic spike anomalies on specific dates
-            // Spike 1: OpenAI tokens spike in contoso-ai (OpenAI Inference)
+            // Spike 1: OpenAI tokens spike in contoso-ai (Azure OpenAI Inference)
             if (
               subId === "contoso-ai" &&
-              res.service.name === "OpenAI Inference" &&
+              res.service.name === "Azure OpenAI Inference" &&
               date >= "2026-05-16" &&
               date <= "2026-05-19"
             ) {
@@ -213,16 +213,16 @@ export class FinOpsDatabase {
             // Spike 3: Compute scaling loop in apex-sandbox (Compute node spillover)
             if (
               subId === "apex-sandbox" &&
-              res.service.name === "Compute" &&
-              date === "2026-04-12"
+              (res.service.name === "Compute" || res.service.name === "Avere vFXT Compute") &&
+              date === "2016-04-12"
             ) {
               actualDailyCost *= 2.8;
             }
 
-            // Spike 4: Kubernetes memory leak spike in contoso-prod on 2026-05-20
+            // Spike 4: Modelling leak spike in contoso-prod on 2026-05-20
             if (
               subId === "contoso-prod" &&
-              res.service.name === "Kubernetes" &&
+              res.service.name === "Avere vFXT Compute" &&
               date === "2026-05-20"
             ) {
               actualDailyCost *= 3.1;
@@ -250,7 +250,7 @@ export class FinOpsDatabase {
         // ----------------- Generate Recommendations ------------------
         resourceTemplates.forEach((res) => {
           // VM Right-sizing Candidate
-          if (res.service.name === "Compute" && res.utilizationRate && res.utilizationRate < 15) {
+          if ((res.service.name === "Compute" || res.service.name === "Avere vFXT Compute") && res.utilizationRate && res.utilizationRate < 15) {
             const costMonthly = Math.round(res.baseCost * 30.5);
             const proposedMonthly = Math.round(res.baseCost * 0.4 * 30.5);
             this.rightSizing.push({
@@ -258,14 +258,14 @@ export class FinOpsDatabase {
               resourceId: res.resourceId,
               resourceName: res.resourceName,
               subscriptionName: subName,
-              currentSize: "Standard_D8s_v5",
-              recommendedSize: "Standard_D4s_v5",
+              currentSize: "Standard_HB120-16rs_v3", // HPC simulation size suitable for Financial Modeling
+              recommendedSize: "Standard_HB120-8rs_v3",
               currentCostMonthly: costMonthly,
               recommendedCostMonthly: proposedMonthly,
               estimatedSavingsMonthly: costMonthly - proposedMonthly,
               avgCpuPercent: Math.round(res.utilizationRate * 10) / 10,
               maxCpuPercent: Math.round(res.utilizationRate * 1.5 * 10) / 10,
-              justification: `CPU and memory utilization averaged under ${Math.round(res.utilizationRate)}% over 30 days. Workload is perfectly bound within a smaller memory footprint.`,
+              justification: `CPU compute density requirements and high memory bounds hovered under ${Math.round(res.utilizationRate)}% over 30 days. Proposed downsize optimizes cash flow without threatening peak compute performance.`,
               impact: "Reboot Required"
             });
           }

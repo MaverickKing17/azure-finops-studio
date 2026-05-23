@@ -162,28 +162,51 @@ export const OptimizationView: React.FC<OptimizationViewProps> = ({
                   {/* Specification grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs mb-4">
                     <div>
-                      <span className="text-zinc-400 block font-mono text-[10px] uppercase">Current SKU</span>
+                      <span className="text-zinc-400 block font-mono text-[10px] uppercase">Current SKU & Cost</span>
                       <code className="text-rose-400 font-mono text-xs">{rec.currentSize}</code>
-                      <span className="text-zinc-500 block text-[10px] mt-0.5">CAD {rec.currentCostMonthly}/mo</span>
+                      <span className="text-zinc-500 block text-[10px] mt-0.5">Current Monthly Cost: <strong className="text-rose-400">CAD {rec.currentCostMonthly}/mo</strong></span>
                     </div>
 
                     <div>
-                      <span className="text-zinc-400 block font-mono text-[10px] uppercase">Proposed SKU</span>
+                      <span className="text-zinc-400 block font-mono text-[10px] uppercase">Proposed SKU & Cost</span>
                       <code className="text-emerald-400 font-mono text-xs">{rec.recommendedSize}</code>
-                      <span className="text-zinc-500 block text-[10px] mt-0.5">CAD {rec.recommendedCostMonthly}/mo</span>
+                      <span className="text-zinc-500 block text-[10px] mt-0.5">Proposed Monthly Cost: <strong className="text-emerald-400">CAD {rec.recommendedCostMonthly}/mo</strong></span>
                     </div>
 
                     <div>
-                      <span className="text-zinc-400 block font-mono text-[10px] uppercase">Utilization (Avg / Max)</span>
+                      <span className="text-zinc-400 block font-mono text-[10px] uppercase font-semibold">Utilization (Avg / Max)</span>
                       <span className="font-mono text-white text-xs block mt-0.5">
                         {rec.avgCpuPercent}% / {rec.maxCpuPercent}% CPU
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-zinc-400 block font-mono text-[10px] uppercase">Remediation Impact</span>
+                      <span className="text-zinc-400 block font-mono text-[10px] uppercase font-semibold">Remediation Impact</span>
                       <span className="font-mono text-amber-400 text-xs block mt-0.5 flex items-center gap-1">
                         <Clock className="w-3 h-3 text-amber-500" /> {rec.impact}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Financial ROI Dashboard Box */}
+                  <div className="mb-4 p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg text-xs font-mono">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                      <div>
+                        <span className="text-[10px] text-zinc-500 uppercase tracking-wider block">Estimated Efficiency ROI</span>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs">
+                          <div>
+                            <span className="text-zinc-400">Net Monthly Savings:</span>{" "}
+                            <span className="text-emerald-400 font-bold">CAD {rec.estimatedSavingsMonthly.toLocaleString()}/mo</span>
+                          </div>
+                          <div className="hidden sm:block text-zinc-600">|</div>
+                          <div>
+                            <span className="text-zinc-400">Annualized Efficiency Gain:</span>{" "}
+                            <span className="text-emerald-400 font-extrabold text-sm">CAD {(rec.estimatedSavingsMonthly * 12).toLocaleString()}/yr</span>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="self-start sm:self-center text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">
+                        ROI: {Math.round((rec.estimatedSavingsMonthly / rec.currentCostMonthly) * 100)}% Reclaimed
                       </span>
                     </div>
                   </div>
@@ -202,7 +225,7 @@ export const OptimizationView: React.FC<OptimizationViewProps> = ({
                           : "bg-zinc-800 border-zinc-700 text-zinc-500 cursor-not-allowed"
                       }`}
                     >
-                      Downsize Resource
+                      {canModify ? "Approve Rightsizing" : "Queue Optimization"}
                     </button>
                   </div>
                 </div>

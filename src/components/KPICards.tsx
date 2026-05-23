@@ -58,9 +58,9 @@ export const KPICards: React.FC<KPICardsProps> = ({
       id: "idle-waste",
       title: "Idle Resource Waste",
       value: `CAD ${wasteCost.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-      subtitle: "Unattached disks, orphaned IPs & zombie VMs",
+      subtitle: `CAD ${wasteCost.toLocaleString("en-US", { maximumFractionDigits: 0 })} Current Waste | CAD ${(wasteCost * 12).toLocaleString("en-US", { maximumFractionDigits: 0 })} Annualized Risk`,
       icon: <AlertOctagon className="w-5 h-5 text-rose-500" />,
-      tag: wasteCost > 0 ? "Action Required" : "Fully Optimized",
+      tag: wasteCost > 0 ? "Annualized Risk Exposure" : "Fully Optimized",
       tagColor: wasteCost > 0 ? "bg-rose-500/10 text-rose-400 border-rose-500/20 animate-pulse" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
     }
   ];
