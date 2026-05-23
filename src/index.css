@@ -1,1 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-dark-main: #0B0F19;
+  --color-dark-card: #151B2E;
+  --color-dark-border: #222C46;
+  --color-dark-hover: #1D263F;
+  --color-azure: #0078D4;
+}
+
+/* Custom scrollbar for high-density tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #151B2E;
+}
+::-webkit-scrollbar-thumb {
+  background: #2b395c;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0078D4;
+}
+
+body {
+  background-color: var(--color-dark-main);
+  color: #E2E8F0;
+  font-family: var(--font-sans);
+}
+
