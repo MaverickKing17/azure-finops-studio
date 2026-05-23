@@ -36,6 +36,7 @@ import { CostChart } from "./components/CostChart";
 import { TagComplianceView } from "./components/TagComplianceView";
 import { OptimizationView } from "./components/OptimizationView";
 import { AnomaliesView } from "./components/AnomaliesView";
+import { FinOpsChat } from "./components/FinOpsChat";
 
 export default function App() {
   // Navigation Workspaces tabs
@@ -541,6 +542,15 @@ export default function App() {
           Built according to Azure Cost Management API & Azure ConsumptionREST Standards
         </span>
       </footer>
+
+      {/* Embedded Live Advisor Chat Drawer */}
+      <FinOpsChat
+        organizationName={activeOrg.name}
+        budget={activeOrg.budget}
+        projectedSpend={projectedSpend}
+        wasteCost={wasteCost}
+        complianceScore={auditResult.score}
+      />
     </div>
   );
 }
