@@ -19,7 +19,12 @@ import {
   PiggyBank,
   CheckCircle,
   Coins,
-  DollarSign
+  DollarSign,
+  Cpu,
+  ShieldCheck,
+  Radio,
+  Layers,
+  CircleDot
 } from "lucide-react";
 import { FinOpsFilterState, FinOpsRole } from "./types";
 import { dbInstance, ORGANIZATIONS, SUBSCRIPTION_NAMES } from "./data/mockData";
@@ -223,57 +228,104 @@ export default function App() {
   return (
     <div className="min-h-screen bg-dark-main text-slate-100 flex flex-col font-sans select-none antialiased">
       {/* Dynamic Master Corporate Header */}
-      <header className="bg-dark-card border-b border-dark-border px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="bg-azure p-2 rounded-xl text-white shadow-lg shadow-azure/20 flex items-center justify-center font-display font-black text-lg tracking-wider">
-            AZ
+      <header className="bg-[#0b0f19] border-b border-dark-border/80 px-6 py-4 flex flex-col md:flex-row items-stretch md:items-center justify-between sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-95 gap-4">
+        {/* Left Brand Identity Column */}
+        <div className="flex items-center gap-4">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-azure to-sky-400 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+            <div className="relative bg-[#0d1424] border border-azure/40 p-2.5 rounded-xl text-white flex items-center justify-center font-display font-black text-xl tracking-wider">
+              <Layers className="w-5 h-5 text-sky-400" />
+            </div>
+            {/* Heartbeat pulse on logo */}
+            <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-azure opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-sky-400"></span>
+            </span>
           </div>
           <div>
-            <h1 className="font-display font-extrabold text-base text-white tracking-tight leading-none">
-              AzureFinOps Dev Studio
-            </h1>
-            <p className="text-[10px] text-zinc-400 font-mono mt-1">
-              Simulated Enterprise Cloud Financial Control Hub • UTC-Time: 2026-05-23
+            <div className="flex items-center gap-2">
+              <h1 className="font-display font-extrabold text-base text-white tracking-tight leading-none group-hover:text-azure transition-colors">
+                Azure<span className="text-sky-400 font-semibold">FinOps</span> Dev Studio
+              </h1>
+              <span className="bg-azure/10 text-sky-400 border border-azure/20 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded-md flex items-center gap-1 font-semibold leading-none">
+                <ShieldCheck className="w-2.5 h-2.5 text-sky-400" /> FSI-SECURE
+              </span>
+            </div>
+            <p className="text-[10px] text-zinc-400 font-mono mt-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Institutional Governance Engine • UTC-Time: 2026-05-23
             </p>
           </div>
         </div>
 
-        {/* Global budget status slider */}
-        <div className="hidden xl:flex items-center gap-4 bg-dark-main border border-dark-border/80 rounded-xl px-4 py-2 text-xs">
-          <div>
-            <span className="text-zinc-500 font-mono text-[9px] block uppercase tracking-wider">
-              {activeOrg.name} Institutional Limits
+        {/* Global budget status glassmorphic telemetry slider (Middle) */}
+        <div className="flex-1 max-w-2xl bg-[#0d1424] border border-dark-border/80 rounded-2xl px-5 py-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-inner">
+          <div className="space-y-1">
+            <span className="text-zinc-500 font-mono text-[9px] uppercase tracking-wider block font-semibold">
+              {activeOrg.name.toUpperCase()} INSTITUTIONAL LIMITS
             </span>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-white font-bold font-mono">
-                Target Budget: CAD {activeOrg.budget.toLocaleString()}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+              <span className="text-white font-extrabold font-mono text-sm tracking-tight">
+                CAD {activeOrg.budget.toLocaleString()}
               </span>
-              <span className="text-zinc-400 font-mono text-[11px]">| Current Run-Rate: CAD {projectedSpend.toLocaleString("en", { maximumFractionDigits: 0 })}</span>
+              <span className="text-zinc-500 font-mono text-[10px] hidden sm:inline">•</span>
+              <span className="text-sky-400 font-mono text-[10.5px] font-semibold">
+                Run-Rate: CAD {projectedSpend.toLocaleString("en", { maximumFractionDigits: 0 })}/mo
+              </span>
             </div>
           </div>
 
-          {/* Budget progress bar */}
-          <div className="w-24 bg-dark-card border border-dark-border rounded-full h-2 overflow-hidden">
-            <div
-              className={`h-full rounded-full ${
-                projectedSpend > activeOrg.budget
-                  ? "bg-rose-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] border-rose-400"
-                  : "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.3)] border-emerald-300"
-              }`}
-              style={{ width: `${Math.min((projectedSpend / activeOrg.budget) * 100, 100)}%` }}
-            />
+          {/* Budget progress bar with glowing slider/percentage info */}
+          <div className="flex items-center gap-3.5 flex-1 max-w-xs md:max-w-[240px]">
+            <div className="flex-1 bg-[#161f30] border border-dark-border/60 rounded-full h-2.5 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  projectedSpend > activeOrg.budget
+                    ? "bg-rose-500 shadow-[0_0_10px_rgba(239,68,68,0.6)] border-rose-400"
+                    : projectedSpend / activeOrg.budget > 0.8
+                    ? "bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)] border-amber-300"
+                    : "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] border-emerald-300"
+                }`}
+                style={{ width: `${Math.min((projectedSpend / activeOrg.budget) * 100, 100)}%` }}
+              />
+            </div>
+            <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border shrink-0 text-center ${
+              projectedSpend > activeOrg.budget
+                ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                : projectedSpend / activeOrg.budget > 0.8
+                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+            }`}>
+              {Math.round((projectedSpend / activeOrg.budget) * 100)}% Used
+            </span>
           </div>
         </div>
 
-        {/* Active Operator metadata tag */}
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">
-            OPERATOR: kingnarmer
-          </span>
+        {/* Right Active Profile / Environment Security Card */}
+        <div className="flex items-center gap-3 bg-[#0d1424] border border-dark-border/80 px-4 py-2.5 rounded-xl shadow-sm text-xs self-start md:self-auto min-w-[210px] justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-1.5 w-1.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">Active Operator</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 bg-gradient-to-tr from-sky-500 to-indigo-500 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0">
+                KN
+              </div>
+              <span className="font-mono text-xs text-white font-bold tracking-tight">kingnarmer</span>
+            </div>
+          </div>
+
+          <div className="border-l border-dark-border/60 pl-3 space-y-0.5 text-right">
+            <span className="text-[8px] font-mono text-zinc-500 uppercase block tracking-wider font-bold">Clearance</span>
+            <span className="inline-block bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded font-bold leading-none tracking-tight">
+              {currentRole}
+            </span>
+          </div>
         </div>
       </header>
 
